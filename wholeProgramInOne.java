@@ -3,6 +3,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
+//dU ÄR SÅ JÄVLA COOL
 public class wholeProgramInOne {
     public static void main(String[] args) {
 
