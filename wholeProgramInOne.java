@@ -2,8 +2,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.io.*;
 
-//dU ÄR SÅ JÄVLA COOL
 public class wholeProgramInOne {
     public static void main(String[] args) {
 
@@ -11,37 +11,60 @@ public class wholeProgramInOne {
 
         // List of Lunch Roulette participants
 
+        List<String> nameListplay = new ArrayList<>();
         List<String> nameList = new ArrayList<>();
 
-        nameList.add("Nora");
-        nameList.add("Emelie");
-        nameList.add("Wilja");
-        nameList.add("Karin");
-        nameList.add("Ulrika");
-        nameList.add("Sofia");
-        nameList.add("Magnus");
+        int numberOfPlyers = 0;
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(
+                    "/Users/emelie.stromberg/Desktop/Coding/VSCode/lunchRoulette/TextLunchRouletteTest.txt"));
+            String s;
+
+            while ((s = br.readLine()) != null) {
+                nameListplay.add(s);
+                nameList.add(s);
+                numberOfPlyers++;
+            }
+            br.close();
+
+        } catch (Exception ex) {
+            return;
+        }
+
+        // List and collection of topics
 
         List<String> topicList = new ArrayList<>();
 
-        topicList.add("Om man fick hälsa på kungen hur som helst, vad hade du gjort då?");
-        topicList.add("Om du kunde ha en tatuering i bara en vecka, vilken tatuering hade du haft då?");
-        topicList.add("Om du fick tatuera den till höger om dig med vilket motiv som helst, vad hade du valt?");
-        topicList.add("Tänk ut ett rim om din favoritfärg och läs upp den. Du har två minuter på dig.");
-        topicList.add("Om du fick börja med en ny hobby, vad hade du gjort då?");
-        topicList.add("Vad är din bästa guilty pleasure film/serie?");
-        topicList.add("Vad är din största skill och vad tror du att personen till vänster om dig är hemligt bra på?");
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(
+                    "/Users/emelie.stromberg/Desktop/Coding/VSCode/lunchRoulette/topicsLunchRoulette.txt"));
+            String s;
 
+            while ((s = br.readLine()) != null) {
+                topicList.add(s);
+            }
+            br.close();
+
+        } catch (Exception ex) {
+            return;
+        }
+
+        // START OF ROULETTE
         // The program starts here and runs until quit is entered in the main menu
 
-        for (int h = 0; h < 100; h++) {
+        boolean playing = true;
+        int round = 0;
+
+        while (playing) {
 
             // Main menu: Welcome to / welcome back to Lunch Roulette + choose option
 
-            if (h == 0) {
+            if (round == 0) {
                 System.out.println("\n\nHello and welcome to the Lunch Roulette!");
                 System.out.println(
                         "This is the game where we see which three lucky people are going to have lunch together!\nHere are your options:\n");
-            } else if (h > 0) {
+            } else if (round > 0) {
                 System.out.println("\n\nHello and welcome back to the Lunch Roulette!");
                 System.out.println("What do you want to do now?\n");
             }
@@ -55,19 +78,22 @@ public class wholeProgramInOne {
 
             if (playerInput.equals("play")) {
 
-                for (int j = 0; j < 100; j++) {
+                boolean play = true;
+                while (play) {
                     System.out.println("\nAlrighty let's go.");
                     System.out.println("Here's your team and your topic to talk about:\n");
                     List<String> lunchGroupOfThree = new ArrayList<>();
                     Random random = new Random();
 
+                    // boolean isAdded = false;
+
                     for (int i = 0; i < 3; i++) {
 
-                        int randomInt = random.nextInt(nameList.size());
-                        String randomPerson = nameList.get(randomInt);
+                        int randomInt = random.nextInt(nameListplay.size());
+                        String randomPerson = nameListplay.get(randomInt);
 
                         lunchGroupOfThree.add(randomPerson);
-                        nameList.remove(randomInt);
+                        nameListplay.remove(randomInt);
                     }
 
                     int randomIntTopics = random.nextInt(topicList.size());
@@ -81,8 +107,8 @@ public class wholeProgramInOne {
                     String optionInput = scanner.nextLine();
 
                     if (optionInput.equals("no")) {
-                        j = 100;
-                        System.out.println("\nOkay, have fun! Bye!\n");
+                        play = false;
+                        System.out.println("\nOkay, have fun!\n");
                     } else if (optionInput.equals("yes")) {
 
                     }
@@ -97,14 +123,27 @@ public class wholeProgramInOne {
                         "\nPlease enter the names you want to add one at a time. Type 'stop' to stop adding names");
                 List<String> listOfAddedNames = new ArrayList<>();
 
-                for (int i = 0; i < 100; i++) {
+                boolean add = true;
+                while (add) {
                     String addNameInput = scanner.nextLine();
 
                     if (addNameInput.equals("stop")) {
-                        i = 100;
+                        add = false;
                     } else {
                         listOfAddedNames.add(addNameInput);
                         nameList.add(addNameInput);
+                        nameListplay.add(addNameInput); // Göra så att textfilen läses in varje gång man ska spela för
+                                                        // då uppdateras listan inför varje gång och då behövs inte den
+                                                        // här raden kod
+                        try {
+                            BufferedWriter bw = new BufferedWriter(new FileWriter(
+                                    "/Users/emelie.stromberg/Desktop/Coding/VSCode/lunchRoulette/TextLunchRouletteTest.txt"));
+                            bw.write(nameList + ""); // lös pls så att det går att printa en hel lista bara utan krångel
+                            bw.close();
+
+                        } catch (Exception ex) {
+                            return;
+                        }
                     }
                 }
                 System.out.println("\nWelcome to the new members of the Lunch Roulette:" + listOfAddedNames + "\n");
@@ -118,10 +157,11 @@ public class wholeProgramInOne {
                         "\nPlease enter the names you want to remove one at a time. Type 'stop' to stop removing names");
                 List<String> listOfRemovedNames = new ArrayList<>();
 
-                for (int i = 0; i < 100; i++) {
+                boolean remove = true;
+                while (remove) {
                     String removeNameInput = scanner.nextLine();
                     if (removeNameInput.equals("stop")) {
-                        i = 100;
+                        remove = false;
                     } else {
                         listOfRemovedNames.add(removeNameInput);
                         nameList.remove(removeNameInput);
@@ -135,20 +175,23 @@ public class wholeProgramInOne {
             // See the list of all Lunch Roulette participants
 
             if (playerInput.equals("see list")) {
-                System.err.println("\nHere is everyone who participates in Lunch Roulette:\n" + nameList);
+                System.err.println(
+                        "\nThere are " + numberOfPlyers + " people who participates in Lunch Roulette:\n" + nameList);
             }
 
             // Quit the game. Shut down Lunch Roulette
 
             if (playerInput.equals("quit")) {
-                h = 100;
+                playing = false;
                 System.out.println("\nOkay, have a good day! Bye!\n");
             }
 
+            round++;
             // else {
             // System.out.println("\nSorry, that is not an option. Put your glasses on
             // smh\n");
             // }
+
         }
     }
 }
